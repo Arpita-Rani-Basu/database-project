@@ -1,0 +1,407 @@
+Create table Customer (   
+Customer_ID Number(10),   
+Customer_Name Varchar2(50),   
+Email_Address Varchar2(100),   
+Contect_N0 Varchar2(15),   
+Customer_Address Varchar2(150),   
+Primary Key (Customer_ID) );
+  
+DESC Customer;
+
+Create table Category (
+  Category_ID Number(10),
+  Category_Name Varchar2(50),
+  Primary Key (Category_ID)
+);
+DESC Category;
+
+Create table Product (
+  Product_ID Number(10),
+  Product_Name varchar2(100),
+  Price Number(10,2),
+  Stock Number(10),
+  category_ID Number(10),
+  Primary Key (Product_ID),
+  Foreign Key (Category_ID) References Category(Category_ID)
+);
+DESC product;
+
+Create table Orders(
+  Order_ID Number(10),
+  Order_Date Date,
+  Total_Amount Number (10,2),
+  Customer_ID Number(10),
+  Primary Key (Order_ID),
+  Foreign Key (Customer_ID) References Customer(Customer_ID)
+);
+DESC Orders;
+
+Create table Payment(
+  Payment_ID Number(10),
+  Payment_Method varchar2(30),
+  Payment_Date Date,
+  Amount Number(10,2),
+  Order_ID Number(10),
+  Primary Key (Payment_ID),
+  Foreign Key (Order_ID) References Orders(Order_ID)
+);
+DESC Payment;
+
+Create table Delivery (
+Delivery_ID Number(10), 
+Delivery_Name Varchar2(50),   
+Salary Number(10,2),   
+Phone Varchar2(15),   
+Vehicle_No Varchar2(20),   
+Order_ID Number(10),   
+Primary Key (Delivery_ID),   
+Foreign Key (Order_ID) References Orders(Order_ID) 
+); 
+DESC Delivery;
+
+Create table Order_Item(
+  Order_ID Number(10),
+  Product_ID Number(10),
+  Quantity Number (10),
+  Subtotal Number(10,2),
+  Primary Key (Order_ID, Product_ID),
+  Foreign Key (Order_ID) References Orders(Order_ID),
+  Foreign Key (Product_ID) References Product(Product_ID)
+);
+DESC Order_Item;
+
+-- Customers 
+INSERT INTO Customer VALUES ('075','Arpita Rani Basu', 'arpita.basu@gmail.com', '0122222222', 'Banani');
+INSERT INTO Customer VALUES ('455','Joytu Barua', 'joytu.barua@gmail.com', '0155555555', 'Kakrail');
+INSERT INTO Customer VALUES ('076', 'Humayra Hasib Hia', 'humayra.hasib@gmail.com', '01444444444', 'Hatirjhil');
+INSERT INTO Customer VALUES ('564', 'Sadia Islam','sadia.islam@gmail.com' , '01888888888', 'Ghulshan');
+INSERT INTO Customer VALUES ('432', 'Mahamuda', 'maha.muda@gmail.com', '01999999999', 'Mirpur');
+INSERT INTO Customer VALUES ('437', 'Ety', 'ety.@gmail.com', '01999999976', 'Sathmatha');
+INSERT INTO Customer VALUES ('439', 'Anisha', 'anisha.aslam@gmail.com', '01999999986', 'Puran Dhaka');
+INSERT INTO Customer VALUES('430', 'Rafiza', 'rafiza.islam@gmail.com', '01999999990', 'Khilkhet');
+INSERT INTO Customer VALUES('436', 'Saif', 'saif.islam@gmail.com', '01999999965', 'Mirpur');
+INSERT INTO Customer VALUES('435', 'Ratul', 'ratul.islam@gmail.com', '01999999954', 'Jattrabari');
+INSERT INTO Customer VALUES('431', 'Mahim', 'mahim.alom@gmail.com', '01999999977', 'Mirpur');
+
+
+-- find delivery persons with salary > 10000 and assigned to an order
+Select *
+from Delivery
+where Salary > 10000
+And Order_ID IS NOT NULL;
+
+-- find Delivery persons whose salary is greter than 15000 OR Vehicle Number is DHK-1234
+Select *
+from Delivery
+where Salary > 15000
+OR Vehicle_No = 'DHK-1234';
+
+-- find delivery persons who do NOT have salary greter than 12000
+Select *
+from Delivery
+where NOT Salary > 12000;
+
+-- find to combine Customer IDs from Customer and Orders tables
+Select  Customer_ID from Customer UNION ALL Select Customer_ID from Orders;
+
+-- find Common customer IDs present in both Customer and Orders tables
+Select  Customer_ID from Customer INTERSECT  Select Customer_ID from Orders;
+
+-- find Common customer IDs that are  Customer tables but not in Orders table
+Select  Customer_ID from Customer EXCEPT  Select Customer_ID from Orders;
+
+
+--Find delivery persons whose salary is greater than 12,000 and their vehicle number is DHK-1234.
+SELECT *
+FROM Delivery
+WHERE Salary > 12000
+AND Vehicle_No = 'DHK-1234';
+
+--Find delivery persons whose salary is less than 10,000 or whose salary is greater than 20,000.
+SELECT *
+FROM Delivery
+WHERE Salary < 10000
+OR Salary > 20000;
+
+--Find delivery persons whose salary is not greater than 15,000.
+SELECT *
+FROM Delivery
+WHERE NOT Salary > 15000;
+
+--Find delivery persons who are not assigned to any order.
+SELECT *
+FROM Delivery
+WHERE Order_ID IS NULL;
+
+--Find delivery persons who are assigned to an order.
+SELECT *
+FROM Delivery
+WHERE Order_ID IS NOT NULL;
+
+--Find products whose Product_ID is 101, 102, or 103.
+SELECT *
+FROM Product
+WHERE Product_ID IN (101, 102, 103);
+
+--Find products whose Product_ID is not 101, 102, or 103.
+SELECT *
+FROM Product
+WHERE Product_ID NOT IN (101, 102, 103);
+
+--Find delivery persons whose salary is between 10,000 and 20,000.
+SELECT *
+FROM Delivery
+WHERE Salary BETWEEN 10000 AND 20000;
+
+--Find delivery persons whose salary is not between 10,000 and 20,000.
+SELECT *
+FROM Delivery
+WHERE Salary NOT BETWEEN 10000 AND 20000;
+
+--Find customers whose names start with A.
+SELECT *
+FROM Customer
+WHERE Customer_Name LIKE 'A%';
+
+--Find customers whose names end with a.
+SELECT *
+FROM Customer
+WHERE Customer_Name LIKE '%a';
+
+--Find products whose stock is less than 10.
+SELECT *
+FROM Product
+WHERE Stock < 10;
+
+--Find orders whose total amount is greater than 20,000.
+SELECT *
+FROM Orders
+WHERE Total_Amount > 20000;
+
+--Find payments made using Cash or Card.
+SELECT *
+FROM Payment
+WHERE Payment_Method IN ('Cash', 'Card');
+
+--Find delivery persons whose salary is greater than 15,000 and whose vehicle is DHK-1234, or whose salary is greater than 25,000.
+SELECT *
+FROM Delivery
+WHERE (Salary > 15000 AND Vehicle_No = 'DHK-1234')
+OR Salary > 25000;
+
+--Find the highest delivery person's salary.
+SELECT MAX(Salary) AS Highest_Salary
+FROM Delivery;
+
+--Find the lowest delivery person's salary.
+SELECT MIN(Salary) AS Lowest_Salary
+FROM Delivery;
+
+--Find the average salary of delivery persons.
+SELECT AVG(Salary) AS Average_Salary
+FROM Delivery;
+
+--Find the total salary paid to all delivery persons.
+SELECT SUM(Salary) AS Total_Salary
+FROM Delivery;
+
+--Count the total number of delivery persons.
+SELECT COUNT(*) AS Total_Delivery_Persons
+FROM Delivery;
+
+--Display delivery persons from highest salary to lowest salary.
+SELECT *
+FROM Delivery
+ORDER BY Salary DESC;
+
+--Display products from lowest price to highest price.
+SELECT *
+FROM Product
+ORDER BY Price ASC;
+
+--Insert a new customer into the Customer table.
+INSERT INTO Customer
+(Customer_ID, Customer_Name, Email_Address, Contect_N0, Customer_Address)
+VALUES
+(1, 'Arpita', 'arpita@gmail.com', '01712345678', 'Dhaka');
+
+--Find customer names and their order IDs.
+SELECT c.Customer_Name, o.Order_ID
+FROM Customer c
+INNER JOIN Orders o
+ON c.Customer_ID = o.Customer_ID;
+
+--Display all customers and their orders, including customers who have not placed any order.
+SELECT c.Customer_Name, o.Order_ID
+FROM Customer c
+LEFT JOIN Orders o
+ON c.Customer_ID = o.Customer_ID;
+
+--Display all categories and their products, including categories that have no products.
+SELECT c.Category_Name, p.Product_Name
+FROM Product p
+RIGHT JOIN Category c
+ON p.Category_ID = c.Category_ID;
+
+--Display all customers and all orders, including customers without orders and orders without matching customers.
+SELECT c.Customer_Name, o.Order_ID
+FROM Customer c
+FULL JOIN Orders o
+ON c.Customer_ID = o.Customer_ID;
+
+--Find the total number of customers.
+SELECT COUNT(*) AS Total_Customers
+FROM Customer;
+
+--Find the total salary of all delivery persons.
+SELECT SUM(Salary) AS Total_Salary
+FROM Delivery;
+
+--Find the average salary of delivery persons.
+SELECT AVG(Salary) AS Average_Salary
+FROM Delivery;
+
+--Find the highest salary of delivery persons.
+SELECT MAX(Salary) AS Highest_Salary
+FROM Delivery;
+
+--Find the lowest salary of delivery persons.
+SELECT MIN(Salary) AS Lowest_Salary
+FROM Delivery;
+
+--Find the average product price for each category.
+SELECT Category_ID, AVG(Price) AS Average_Price
+FROM Product
+GROUP BY Category_ID;
+
+--Find payment methods whose total payment amount is greater than 20,000.
+SELECT Payment_Method, SUM(Amount) AS Total_Amount
+FROM Payment
+GROUP BY Payment_Method
+HAVING SUM(Amount) > 20000;
+
+--Display all customers
+SELECT *
+FROM Customer;
+
+-- Display only customer names and addresses
+SELECT Customer_Name, Customer_Address
+FROM Customer;
+
+
+-- Display product names and prices
+SELECT Product_Name, Price
+FROM Product;
+
+-- Display order ID and total amount
+SELECT Order_ID, Total_Amount
+FROM Orders;
+
+
+-- Find products with price greater than 1000
+SELECT *
+FROM Product
+WHERE Price > 1000;
+
+-- Find products with price less than 500
+SELECT *
+FROM Product
+WHERE Price < 500;
+
+-- Find customers from Banani
+SELECT *
+FROM Customer
+WHERE Customer_Address = 'Banani';
+
+-- Find orders with total amount less than 10000
+SELECT *
+FROM Orders
+WHERE Total_Amount < 10000;
+
+--Find the customer who placed the highest-value order
+SELECT c.Customer_Name, o.Order_ID, o.Total_Amount
+FROM Customer c
+JOIN Orders o
+ON c.Customer_ID = o.Customer_ID
+WHERE o.Total_Amount = (
+    SELECT MAX(Total_Amount)
+    FROM Orders
+);
+
+--Find the most expensive product in each category
+SELECT p.Product_ID,
+       p.Product_Name,
+       p.Category_ID,
+       p.Price
+FROM Product p
+WHERE p.Price = (
+    SELECT MAX(p2.Price)
+    FROM Product p2
+    WHERE p2.Category_ID = p.Category_ID
+);
+
+--Find payment methods whose total payment is greater than the average payment-method total
+SELECT Payment_Method,
+       SUM(Amount) AS Total_Payment
+FROM Payment
+GROUP BY Payment_Method
+HAVING SUM(Amount) > (
+    SELECT AVG(Total_Amount)
+    FROM (
+        SELECT SUM(Amount) AS Total_Amount
+        FROM Payment
+        GROUP BY Payment_Method
+    )
+);
+
+--Find customers who have more than one order
+SELECT c.Customer_ID,
+       c.Customer_Name,
+       COUNT(o.Order_ID) AS Total_Orders
+FROM Customer c
+JOIN Orders o
+ON c.Customer_ID = o.Customer_ID
+GROUP BY c.Customer_ID, c.Customer_Name
+HAVING COUNT(o.Order_ID) > 1;
+
+--Find customers who have placed more orders than the average number of orders per customer
+SELECT c.Customer_ID,
+       c.Customer_Name,
+       COUNT(o.Order_ID) AS Total_Orders
+FROM Customer c
+JOIN Orders o
+ON c.Customer_ID = o.Customer_ID
+GROUP BY c.Customer_ID, c.Customer_Name
+HAVING COUNT(o.Order_ID) > (
+    SELECT AVG(Order_Count)
+    FROM (
+        SELECT COUNT(*) AS Order_Count
+        FROM Orders
+        GROUP BY Customer_ID
+    )
+);
+
+--Find products whose total sold quantity is greater than 5
+SELECT p.Product_Name,
+       SUM(oi.Quantity) AS Total_Quantity
+FROM Product p
+JOIN Order_Item oi
+ON p.Product_ID = oi.Product_ID
+GROUP BY p.Product_Name
+HAVING SUM(oi.Quantity) > 5;
+
+--Find customers whose total spending is greater than the average customer spending
+SELECT c.Customer_Name,
+       SUM(o.Total_Amount) AS Total_Spent
+FROM Customer c
+JOIN Orders o
+ON c.Customer_ID = o.Customer_ID
+GROUP BY c.Customer_Name
+HAVING SUM(o.Total_Amount) > (
+    SELECT AVG(Customer_Total)
+    FROM (
+        SELECT SUM(Total_Amount) AS Customer_Total
+        FROM Orders
+        GROUP BY Customer_ID
+    )
+);
